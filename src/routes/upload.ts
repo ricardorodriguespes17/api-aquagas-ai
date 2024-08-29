@@ -1,9 +1,10 @@
 import { Router } from 'express'
 import { UploadRequestType, UploadResponseType } from '../@types/uploadTypes'
+import { uploadValidation } from '../validations/uploadValidation'
 
 const uploadRouter = Router()
 
-uploadRouter.post("/upload", (req: UploadRequestType, res: UploadResponseType) => {
+uploadRouter.post("/upload", uploadValidation, (req: UploadRequestType, res: UploadResponseType) => {
   const {
     customer_code,
     image,
