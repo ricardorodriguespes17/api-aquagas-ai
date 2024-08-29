@@ -16,6 +16,10 @@ const uploadSchema = Yup.object({
   measure_datetime: Yup
     .string()
     .required("measure_datetime é obrigatório")
+    .matches(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|([+\-]\d{2}:\d{2}))$/,
+      "measure_datetime deve ser uma data e hora válida (YYYY-MM-DD)"
+    )
 })
 
 export const uploadValidation = async (req: Request, res: Response, next: Function) => {

@@ -72,7 +72,7 @@ describe('POST /upload validations', () => {
     expect(response.body.error_description).toContain('customer_code é obrigatório')
   })
 
-  it('should return 400 if measure_datetime is missing', async () => {
+  it('should return 400 if measure_datetime is missing or invalid', async () => {
     const response = await request(app)
       .post('/upload')
       .send({
@@ -83,6 +83,18 @@ describe('POST /upload validations', () => {
     expect(response.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
     expect(response.body.error_description).toContain('measure_datetime é obrigatório')
+
+    const invalidResponse = await request(app)
+      .post('/upload')
+      .send({
+        image: 'data:image/jpeg;base64,validbase64string',
+        measure_type: 'WATER',
+        customer_code: '12345',
+        measure_datetime: 'INVALID_DATE'
+      })
+    expect(invalidResponse.status).toBe(400)
+    expect(response.body.error_code).toEqual('INVALID_DATA')
+    expect(invalidResponse.body.error_description).toContain('measure_datetime deve ser uma data e hora válida (YYYY-MM-DD)')
   })
 
   it('should return 200 if all fields are valid', async () => {
