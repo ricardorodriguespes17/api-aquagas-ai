@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    container_name: app_container
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+
+  test:
+    build: .
+    container_name: test_container
+    environment:
+      - NODE_ENV=test
+    command: npm test
+    volumes:
+      - .:/app
