@@ -1,19 +1,20 @@
 services:
   app:
     build: .
-    container_name: app_container
     environment:
-      - NODE_ENV=development
-    volumes:
-      - .:/app
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     ports:
       - "3000:3000"
-
-  test:
-    build: .
-    container_name: test_container
-    environment:
-      - NODE_ENV=test
-    command: npm test
     volumes:
       - .:/app
+    command: npm run dev
+
+  # test:
+  #   build: .
+  #   container_name: test_container
+  #   environment:
+  #     - NODE_ENV=test
+  #   command: npm test
+  #   volumes:
+  #     - .:/app
