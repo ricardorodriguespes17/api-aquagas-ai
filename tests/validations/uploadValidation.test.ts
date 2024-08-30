@@ -15,7 +15,7 @@ describe('POST /upload validations', () => {
       .send({
         measure_type: 'WATER',
         customer_code: '12345',
-        measure_datetime: '2024-08-29T10:00:00Z'
+        measure_datetime: '2024-08-29T10:00:00'
       })
     expect(response.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
@@ -27,7 +27,7 @@ describe('POST /upload validations', () => {
         image: 'invalidbase64string',
         measure_type: 'WATER',
         customer_code: '12345',
-        measure_datetime: '2024-08-29T10:00:00Z'
+        measure_datetime: '2024-08-29T10:00:00'
       })
     expect(invalidResponse.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
@@ -40,7 +40,7 @@ describe('POST /upload validations', () => {
       .send({
         image: 'data:image/jpeg;base64,validbase64string',
         customer_code: '12345',
-        measure_datetime: '2024-08-29T10:00:00Z'
+        measure_datetime: '2024-08-29T10:00:00'
       })
     expect(response.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
@@ -52,7 +52,7 @@ describe('POST /upload validations', () => {
         image: 'data:image/jpeg;base64,validbase64string',
         measure_type: 'INVALID_TYPE',
         customer_code: '12345',
-        measure_datetime: '2024-08-29T10:00:00Z'
+        measure_datetime: '2024-08-29T10:00:00'
       })
     expect(invalidResponse.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
@@ -65,7 +65,7 @@ describe('POST /upload validations', () => {
       .send({
         image: 'data:image/jpeg;base64,validbase64string',
         measure_type: 'WATER',
-        measure_datetime: '2024-08-29T10:00:00Z'
+        measure_datetime: '2024-08-29T10:00:00'
       })
     expect(response.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
@@ -94,7 +94,7 @@ describe('POST /upload validations', () => {
       })
     expect(invalidResponse.status).toBe(400)
     expect(response.body.error_code).toEqual('INVALID_DATA')
-    expect(invalidResponse.body.error_description).toContain('measure_datetime deve ser uma data e hora válida (YYYY-MM-DD)')
+    expect(invalidResponse.body.error_description).toContain('measure_datetime deve ser uma data e hora válida (YYYY-MM-DDTHH:mm:ss)')
   })
 
   it('should return 200 if all fields are valid', async () => {
@@ -104,7 +104,7 @@ describe('POST /upload validations', () => {
         image: 'data:image/jpeg;base64,validbase64string',
         measure_type: 'WATER',
         customer_code: '12345',
-        measure_datetime: '2024-08-29T10:00:00Z'
+        measure_datetime: '2024-08-29T10:00:00'
       })
     expect(response.status).toBe(200)
     expect(response.body.message).toBe('Request is valid')
