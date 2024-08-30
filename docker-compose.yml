@@ -10,6 +10,13 @@ services:
       - .:/app
     command: npm run dev
 
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
   test:
     build: .
     container_name: test_container
