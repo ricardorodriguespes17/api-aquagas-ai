@@ -3,8 +3,7 @@ import { GoogleAIFileManager } from '@google/generative-ai/server'
 export const uploadImage = async (imageBase64: string, displayName: string) => {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    console.error("GEMINI_API_KEY not found in .env")
-    return null
+    return { error: "GEMINI_API_KEY not found in .env" }
   }
 
   try {
@@ -14,9 +13,11 @@ export const uploadImage = async (imageBase64: string, displayName: string) => {
       displayName,
     })
 
-    return response
+    return {
+      file: response.file,
+      error: null
+    }
   } catch (err) {
-    console.error("Erro on upload image:", err)
-    return null
+    return { error: "Erro on upload image: " + err }
   }
 }
