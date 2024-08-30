@@ -1,6 +1,5 @@
 import { GenerationConfig, GenerativeContentBlob, GoogleGenerativeAI, SchemaType } from '@google/generative-ai'
 
-const apiKey = process.env.GEMINI_API_KEY
 const genModel = "gemini-1.5-flash"
 const generationConfig: GenerationConfig = {
   temperature: 1,
@@ -19,6 +18,8 @@ const generationConfig: GenerationConfig = {
 };
 
 export const generateContent = async (imageBase64: string, meterType: "WATER" | "GAS") => {
+  const apiKey = process.env.GEMINI_API_KEY
+
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY not found in .env")
   }

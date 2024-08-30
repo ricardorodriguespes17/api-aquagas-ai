@@ -10,11 +10,11 @@ services:
       - .:/app
     command: npm run dev
 
-  # test:
-  #   build: .
-  #   container_name: test_container
-  #   environment:
-  #     - NODE_ENV=test
-  #   command: npm test
-  #   volumes:
-  #     - .:/app
+  test:
+    build: .
+    container_name: test_container
+    environment:
+      - NODE_ENV=test
+    command: npm test
+    volumes:
+      - .:/app

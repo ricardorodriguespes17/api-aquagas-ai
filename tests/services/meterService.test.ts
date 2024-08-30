@@ -1,59 +1,60 @@
-import { uploadImage } from '../../src/services/meterService'
+import { generateContent } from '../../src/services/meterService'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-jest.mock('@google/generative-ai/server', () => {
-  return {
-    GoogleAIFileManager: jest.fn().mockImplementation(() => {
-      return {
-        uploadFile: jest.fn().mockResolvedValue({
-          file: {
-            displayName: 'Mock Image',
-            uri: 'mock-uri',
-          },
-        }),
-      }
-    }),
-  }
-})
+jest.mock('@google/generative-ai')
 
-beforeEach(() => {
-  jest.spyOn(console, 'error').mockImplementation(() => {})
-})
+describe('generateContent', () => {
+  const apiKey = 'test-api-key'
+  process.env.GEMINI_API_KEY = apiKey
 
-afterEach(() => {
-  jest.clearAllMocks()
-  jest.restoreAllMocks()
-})
-
-describe('uploadImage', () => {
-  const mockApiKey = 'mock-api-key'
-  const mockImageBase64 = 'mock-base64-string'
-  const mockDisplayName = 'Mock Image'
+  const mockGenerateContent = jest.fn()
 
   beforeEach(() => {
-    process.env.GEMINI_API_KEY = mockApiKey
+    (GoogleGenerativeAI as jest.Mock).mockImplementation(() => ({
+      getGenerativeModel: () => ({
+        generateContent: mockGenerateContent,
+      }),
+    }))
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
-  it('should upload an image and return the response', async () => {
-    const response = await uploadImage(mockImageBase64, mockDisplayName)
+  it('should call generateContent with correct parameters', async () => {
+    const imageBase64 = 'data:image/png;base64,test'
+    const meterType = 'WATER'
+    const prompt = `Analyze the attached image and extract the numerical reading displayed on the meter. The meter is for ${meterType}`
+    const inlineData = {
+      mimeType: 'image/png',
+      data: imageBase64.replace('data:image/png;base64,', ''),
+    }
 
-    expect(response).toEqual({
-      file: {
-        displayName: mockDisplayName,
-        uri: 'mock-uri',
-      },
-    })
-    expect(console.error).toHaveBeenCalledTimes(0)
+    mockGenerateContent.mockResolvedValue({ response: { text: () => '123' } })
+
+    const result = await generateContent(imageBase64, meterType)
+
+    expect(result).toBe('123')
+    expect(GoogleGenerativeAI).toHaveBeenCalledWith(apiKey)
+    expect(mockGenerateContent).toHaveBeenCalledWith([{ inlineData }, prompt])
   })
 
-  it('should return null if GEMINI_API_KEY is not set', async () => {
+  it('should handle model errors gracefully', async () => {
+    const imageBase64 = 'data:image/png;base64,test'
+    const meterType = 'GAS'
+
+    mockGenerateContent.mockRejectedValue(new Error('Model error'))
+
+    await expect(generateContent(imageBase64, meterType))
+      .rejects
+      .toThrow('Model error')
+  })
+
+  it('should throw an error if API key is missing', async () => {
     delete process.env.GEMINI_API_KEY
-    const response = await uploadImage(mockImageBase64, mockDisplayName)
 
-    expect(response).toBeNull()
-    expect(console.error).toHaveBeenCalledWith('GEMINI_API_KEY not found in .env')
+    await expect(generateContent('data:image/png;base64,test', 'WATER'))
+      .rejects
+      .toThrow('GEMINI_API_KEY not found in .env')
   })
 })
