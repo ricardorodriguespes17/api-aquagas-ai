@@ -11,7 +11,7 @@ model Measure {
   uuid          String   @id @default(uuid()) @db.Uuid
   customer_code String
   datetime      DateTime
-  imageUrl      String
+  image_url      String
   value         Float
   type          String
 }
