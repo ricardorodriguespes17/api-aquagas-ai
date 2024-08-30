@@ -1,5 +1,5 @@
 import { UploadRequestType, UploadResponseType } from "../@types/uploadTypes";
-import { uploadImage } from "../services/meterService";
+import { generateContent } from "../services/meterService";
 
 const index = async (req: UploadRequestType, res: UploadResponseType) => {
   const {
@@ -10,20 +10,23 @@ const index = async (req: UploadRequestType, res: UploadResponseType) => {
   } = req.body
 
   const imageName = `${customer_code}-${measure_datetime}`
-  const response = await uploadImage(image, imageName)
 
-  if (response.file) {
+  try {
+    const response = await generateContent(image, measure_type)
+
+    const { measure } = JSON.parse(response) as { measure: string }
+
     return res.status(200).json({
-      image_url: response.file.uri,
+      image_url: "",
       measure_uuid: imageName,
-      measure_value: 0
+      measure_value: parseInt(measure)
+    })
+  } catch (err) {
+    return res.status(500).json({
+      error_code: "INTERNAL_ERROR",
+      error_description: String(err)
     })
   }
-
-  return res.status(400).json({
-    error_code: "INTERNAL_ERROR",
-    error_description: response.error
-  })
 }
 
 export default {

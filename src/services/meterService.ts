@@ -1,23 +1,38 @@
-import { GoogleAIFileManager } from '@google/generative-ai/server'
+import { GenerationConfig, GenerativeContentBlob, GoogleGenerativeAI, SchemaType } from '@google/generative-ai'
 
-export const uploadImage = async (imageBase64: string, displayName: string) => {
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
-    return { error: "GEMINI_API_KEY not found in .env" }
-  }
-
-  try {
-    const fileManager = new GoogleAIFileManager(apiKey)
-    const response = await fileManager.uploadFile(imageBase64, {
-      mimeType: "image/jpeg",
-      displayName,
-    })
-
-    return {
-      file: response.file,
-      error: null
+const apiKey = process.env.GEMINI_API_KEY
+const genModel = "gemini-1.5-flash"
+const generationConfig: GenerationConfig = {
+  temperature: 1,
+  topP: 0.95,
+  topK: 64,
+  maxOutputTokens: 8192,
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: SchemaType.OBJECT,
+    properties: {
+      measure: {
+        type: SchemaType.NUMBER
+      }
     }
-  } catch (err) {
-    return { error: "Erro on upload image: " + err }
+  },
+};
+
+export const generateContent = async (imageBase64: string, meterType: "WATER" | "GAS") => {
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY not found in .env")
   }
+
+  const imageData = imageBase64.replace("data:image/png;base64,", "")
+  const prompt = `Analyze the attached image and extract the numerical reading displayed on the meter. The meter is for ${meterType}`
+  const inlineData: GenerativeContentBlob = {
+    mimeType: "image/png",
+    data: imageData
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey)
+  const model = genAI.getGenerativeModel({ model: genModel, generationConfig })
+  const result = await model.generateContent([{ inlineData }, prompt])
+
+  return result.response.text()
 }
