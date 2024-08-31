@@ -16,7 +16,7 @@ const findByUuid = async (data: MeasureFindByUuid) => {
 }
 
 const findByCustomerCode = async (data: MeasureFindByCustomerCode) => {
-  return await prismaClient.measure.findFirst({
+  return await prismaClient.measure.findMany({
     where: {
       customer_code: data.customer_code
     }
