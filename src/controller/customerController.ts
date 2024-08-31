@@ -1,3 +1,4 @@
+import { Measure } from "@prisma/client"
 import { CustomerRequestType, CustomerResponseType } from "../@types/customerTypes"
 import measureRepository from "../repository/measureRepository"
 
@@ -5,7 +6,7 @@ const index = async (req: CustomerRequestType, res: CustomerResponseType) => {
   const { customer_code } = req.params
   const { measure_type } = req.query
 
-  let measures = await measureRepository.findByCustomerCode({ customer_code })
+  let measures: Measure[] = await measureRepository.findByCustomerCode({ customer_code })
 
   if (measure_type) {
     measures = measures.filter(item => item.type === measure_type)
