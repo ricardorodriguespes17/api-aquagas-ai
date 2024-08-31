@@ -32,7 +32,8 @@ const index = async (req: UploadRequestType, res: UploadResponseType) => {
       datetime: new Date(measure_datetime),
       image_url: "",
       type: measure_type,
-      value: measure_value
+      value: measure_value,
+      confirmed: false
     })
 
     return res.status(200).json({

@@ -4,6 +4,7 @@ export type MeasureCreateType = {
   image_url: string
   value: number
   type: string
+  confirmed: boolean
 }
 
 export type MeasureUpdateType = {

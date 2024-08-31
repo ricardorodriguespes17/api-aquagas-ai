@@ -15,4 +15,5 @@ model Measure {
   image_url     String
   value         Float
   type          String
+  confirmed     Boolean
 }

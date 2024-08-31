@@ -1,9 +1,9 @@
-import { Request, Response, Router } from 'express'
+import { Router } from 'express'
+import confirmController from '../controller/confirmController'
+import { confirmValidation } from '../validations/confirmValidation'
 
 const confirmRouter = Router()
 
-confirmRouter.post("/confirm", (req: Request, res: Response) => {
-  return res.status(200).json({ success: true })
-})
+confirmRouter.post("/confirm", confirmValidation, confirmController.index)
 
 export default confirmRouter
