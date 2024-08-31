@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 
 export type UploadRequestType = Request<{}, UploadResponseBodyType, UploadRequestBodyType>
-export type UploadResponseType = Response<UploadResponseBodyType | UploadResponseErrorType>
+export type UploadResponseType = Response<UploadResponseBodyType | ResponseErrorType>
 
 type UploadRequestBodyType = {
   image: string,
@@ -14,9 +14,4 @@ type UploadResponseBodyType = {
   image_url: string,
   measure_value: number,
   measure_uuid: string
-}
-
-type UploadResponseErrorType = {
-  error_code: string
-  error_description: string
 }
