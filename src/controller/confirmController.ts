@@ -7,23 +7,29 @@ const index = async (req: ConfirmRequestType, res: ConfirmResponseType) => {
     measure_uuid
   } = req.body
 
+  let measureData
+
   try {
-    const measureData = await measureRepository.findByUuid({ uuid: measure_uuid })
+    measureData = await measureRepository.findByUuid({ uuid: measure_uuid })
+  } catch(err) {
+    measureData = null
+  }
 
-    if (!measureData) {
-      return res.status(404).json({
-        error_code: "MEASURE_NOT_FOUND",
-        error_description: "Leitura do mês já realizada"
-      })
-    }
+  if (!measureData) {
+    return res.status(404).json({
+      error_code: "MEASURE_NOT_FOUND",
+      error_description: "Leitura do mês já realizada" // na documentação está assim, creio que deveria ser uma mensagem diferente
+    })
+  }
 
-    if (measureData.confirmed) {
-      return res.status(409).json({
-        error_code: "CONFIRMATION_DUPLICATE",
-        error_description: "Leitura do mês já realizada"
-      })
-    }
+  if (measureData.confirmed) {
+    return res.status(409).json({
+      error_code: "CONFIRMATION_DUPLICATE",
+      error_description: "Leitura do mês já realizada" // na documentação está assim, creio que deveria ser uma mensagem diferente
+    })
+  }
 
+  try {
     await measureRepository.update({
       ...measureData,
       value: confirmed_value,
@@ -34,7 +40,7 @@ const index = async (req: ConfirmRequestType, res: ConfirmResponseType) => {
   } catch (err) {
     return res.status(500).json({
       error_code: "INTERNAL_ERROR",
-      error_description: "Erro inesperado"
+      error_description: String(err)
     })
   }
 }
