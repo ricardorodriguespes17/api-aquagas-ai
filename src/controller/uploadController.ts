@@ -10,14 +10,12 @@ const index = async (req: UploadRequestType, res: UploadResponseType) => {
     measure_type
   } = req.body
 
-  const imageName = `${customer_code}-${measure_datetime}`
-
   try {
     const response = await generateContent(image, measure_type)
     const { measure } = JSON.parse(response) as { measure: string }
     const measure_value = parseInt(measure)
 
-    measureRepository.create({
+    const data = await measureRepository.create({
       customer_code,
       datetime: new Date(measure_datetime),
       image_url: "",
@@ -27,7 +25,7 @@ const index = async (req: UploadRequestType, res: UploadResponseType) => {
 
     return res.status(200).json({
       image_url: "",
-      measure_uuid: imageName,
+      measure_uuid: data.uuid,
       measure_value
     })
   } catch (err) {
