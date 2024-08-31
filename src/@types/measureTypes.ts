@@ -1,4 +1,5 @@
-export type MeasureCreateType = {
+export type MeasureType = {
+  uuid: string
   customer_code: string
   datetime: Date
   image_url: string
@@ -7,9 +8,9 @@ export type MeasureCreateType = {
   confirmed: boolean
 }
 
-export type MeasureUpdateType = {
-  uuid: string
-} & MeasureCreateType
+export type MeasureCreateType = Omit<MeasureType, "uuid">
+
+export type MeasureUpdateType = MeasureType
 
 export type MeasureFindByCustomerCode = {
   customer_code: string

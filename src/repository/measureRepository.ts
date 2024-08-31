@@ -4,7 +4,7 @@ import {
   MeasureFindByCustomerCodeAndMonth,
   MeasureFindByUuid,
   MeasureUpdateType
-} from "../@types/measureRepositoryTypes"
+} from "../@types/measureTypes"
 import { prismaClient } from "../services/prismaClient"
 
 const findAll = async () => {
