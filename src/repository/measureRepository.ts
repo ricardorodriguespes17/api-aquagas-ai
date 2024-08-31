@@ -1,4 +1,10 @@
-import { MeasureCreateType, MeasureFindByCustomerCode, MeasureFindByUuid, MeasureUpdateType } from "../@types/measureRepositoryTypes"
+import {
+  MeasureCreateType,
+  MeasureFindByCustomerCode,
+  MeasureFindByCustomerCodeAndMonth,
+  MeasureFindByUuid,
+  MeasureUpdateType
+} from "../@types/measureRepositoryTypes"
 import { prismaClient } from "../services/prismaClient"
 
 const findAll = async () => {
@@ -10,7 +16,31 @@ const findByUuid = async (data: MeasureFindByUuid) => {
 }
 
 const findByCustomerCode = async (data: MeasureFindByCustomerCode) => {
-  return await prismaClient.measure.findFirst({ where: { customer_code: data.customer_code } })
+  return await prismaClient.measure.findFirst({
+    where: {
+      customer_code: data.customer_code
+    }
+  })
+}
+
+const findByCustomerCodeAndMonth = async (data: MeasureFindByCustomerCodeAndMonth) => {
+  return await prismaClient.measure.findFirst({
+    where: {
+      customer_code: data.customer_code,
+      AND: [
+        {
+          datetime: {
+            gte: new Date(data.datetime.getFullYear(), data.datetime.getMonth(), 1)
+          }
+        },
+        {
+          datetime: {
+            lt: new Date(data.datetime.getFullYear(), data.datetime.getMonth() + 1, 1)
+          }
+        }
+      ]
+    }
+  })
 }
 
 const create = async (data: MeasureCreateType) => {
@@ -23,8 +53,9 @@ const update = async (data: MeasureUpdateType) => {
 
 export default {
   findAll,
-  findByCustomerCode,
   findByUuid,
+  findByCustomerCode,
+  findByCustomerCodeAndMonth,
   create,
   update
 }

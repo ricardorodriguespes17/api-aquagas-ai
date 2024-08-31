@@ -10,6 +10,18 @@ const index = async (req: UploadRequestType, res: UploadResponseType) => {
     measure_type
   } = req.body
 
+  const repeatedByMonth = await measureRepository.findByCustomerCodeAndMonth({
+    customer_code,
+    datetime: new Date(measure_datetime)
+  })
+
+  if (repeatedByMonth) {
+    return res.status(409).json({
+      error_code: "DOUBLE_REPORT",
+      error_description: "Leitura do mês já realizada"
+    })
+  }
+
   try {
     const response = await generateContent(image, measure_type)
     const { measure } = JSON.parse(response) as { measure: string }

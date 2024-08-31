@@ -14,6 +14,10 @@ export type MeasureFindByCustomerCode = {
   customer_code: string
 }
 
+export type MeasureFindByCustomerCodeAndMonth = {
+  datetime: Date
+} & MeasureFindByCustomerCode
+
 export type MeasureFindByUuid = {
   uuid: string
 }
