@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client"
 import { MeasureCreateType, MeasureFindByCustomerCode, MeasureFindByUuid, MeasureUpdateType } from "../@types/measureRepositoryTypes"
 import { prismaClient } from "../services/prismaClient"
 
@@ -22,7 +21,7 @@ const update = async (data: MeasureUpdateType) => {
   return await prismaClient.measure.update({ data, where: { uuid: data.uuid } })
 }
 
-export {
+export default {
   findAll,
   findByCustomerCode,
   findByUuid,
